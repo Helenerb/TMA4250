@@ -1,1 +1,2 @@
-cat("Hei!!")
+cat("Hei!! og hallo")
+cat("hei igjen!")
