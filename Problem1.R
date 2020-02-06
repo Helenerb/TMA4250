@@ -62,15 +62,21 @@ lines(d/10,corr.mat3,type="l",col="blue")
 
 cov.vec <- cov.spatial(0:49,cov.model="matern",cov.pars=c(sigma[1],phi),kappa=nu.mat[1])
 
-cov.matrix <- matrix(data=0,nrow=50,ncol=50)
-for(i in 1:50){
-  for(j in 1:50){
-    cov.matrix[i,j] = cov.vec[abs(i-j)+1]
+getCovMatrix <- function(cov.vec,n){
+  cov.matrix <- matrix(data=0,nrow=50,ncol=50)
+  for(i in 1:50){
+    for(j in 1:50){
+      cov.matrix[i,j] = cov.vec[abs(i-j)+1]
+    }
   }
+  return(cov.matrix)
 }
 
-prior.real <- rmvnorm(4,rep(0,50),cov.matrix)
-plot(d,prior.real[4,],type="l",col="orange")
+prior.real <- rmvnorm(4,rep(0,50),getCovMatrix(cov.vec,50))
+
+par(mfrow=c(2,2))
+
+plot(d,prior.real[4,],type="l",col="orange",main="Maternal, nu=1")
 lines(d,prior.real[1,],type="l",col="red")
 lines(d,prior.real[2,],col="green")
 lines(d,prior.real[3,],col="blue")
