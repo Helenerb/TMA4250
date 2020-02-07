@@ -60,24 +60,66 @@ plot(d/10,var.mat3.5,type="l")
 lines(d/10,var.mat3.1,type="l",col="orange")
 lines(d/10,corr.mat3,type="l",col="blue")
 
-cov.vec <- cov.spatial(0:49,cov.model="matern",cov.pars=c(sigma[1],phi),kappa=nu.mat[1])
-
-getCovMatrix <- function(cov.vec,n){
-  cov.matrix <- matrix(data=0,nrow=50,ncol=50)
-  for(i in 1:50){
-    for(j in 1:50){
+getCovMatrix <- function(cov.vec){
+  cov.matrix <- matrix(data=0,nrow=length(cov.vec),ncol=length(cov.vec))
+  for(i in 1:length(cov.vec)){
+    for(j in 1:length(cov.vec)){
       cov.matrix[i,j] = cov.vec[abs(i-j)+1]
     }
   }
   return(cov.matrix)
 }
 
-prior.real <- rmvnorm(4,rep(0,50),getCovMatrix(cov.vec,50))
+get.prior.real <- function(model,sigma.sq,phi,nu,L=50){
+  cov.vec <- cov.spatial(0:(L-1),cov.model=model,cov.pars=c(sigma.sq,phi),kappa=nu) # vector of covariances
+  cov.matrix <- getCovMatrix(cov.vec)
+  prior.real <- rmvnorm(4,rep(0,L),cov.matrix)
+  return(prior.real)
+}
 
-par(mfrow=c(2,2))
 
-plot(d,prior.real[4,],type="l",col="orange",main="Maternal, nu=1")
-lines(d,prior.real[1,],type="l",col="red")
-lines(d,prior.real[2,],col="green")
-lines(d,prior.real[3,],col="blue")
+plot.reals <- function(prior.real,title){
+  plot(d,rep(0,length(prior.real[1,])),type="l",
+       main=title,xlab="x",ylab="r(x)",ylim=c(min(prior.real),max(prior.real)))
+  colors <- c("orange","red","green","blue")
+  for(i in 1:4){
+    lines(d,prior.real[i,],type="l",col=colors[i])
+  }
+}
+
+
+# Powered exponential, nu = 1, var = 1:
+prior.exp.1.1 <- get.prior.real("powered.exponential", sigma.sq=1, phi, nu=1)
+plot.reals(prior.exp.1.1,"Powered Exponential, nu = 1, var = 1")
+
+# Powered exponential, nu = 1, var = 5:
+prior.exp.1.5 <- get.prior.real("powered.exponential", sigma.sq=5, phi, nu=1)
+plot.reals(prior.exp.1.5,"Powered Exponential, nu = 1, var = 5")
+
+# Powered exponential, nu = 1.9, var = 1:
+prior.exp.19.1 <- get.prior.real("powered.exponential", sigma.sq=1, phi, nu=1.9)
+plot.reals(prior.exp.19.1,"Powered Exponential, nu = 1.9, var = 1")
+
+# Powered exponential, nu = 1.9, var = 5:
+prior.exp.19.5 <- get.prior.real("powered.exponential", sigma.sq=5, phi, nu=1.9)
+plot.reals(prior.exp.19.5,"Powered Exponential, nu = 1.9, var = 5")
+
+# Matérn, nu = 1, var = 1:
+prior.mat.1.1 <- get.prior.real("matern", sigma.sq=1, phi, nu=1)
+plot.reals(prior.mat.1.1,"Matérn, nu = 1, var = 1")
+
+# Matérn, nu = 1, var = 5:
+prior.mat.1.5 <- get.prior.real("matern", sigma.sq=5, phi, nu=1)
+plot.reals(prior.mat.1.5,"Matérn, nu = 1, var = 5")
+
+# Matérn, nu = 3, var = 1:
+prior.mat.3.1 <- get.prior.real("matern", sigma.sq=1, phi, nu=3)
+plot.reals(prior.mat.3.1,"Matérn, nu = 3, var = 1")
+
+# Matérn, nu = 3, var = 5: 
+prior.mat.3.5 <- get.prior.real("matern", sigma.sq=5, phi, nu=3)
+plot.reals(prior.mat.3.5,"Matérn, nu = 3, var = 5")
+
+
+
 
