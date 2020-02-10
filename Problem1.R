@@ -4,6 +4,8 @@ library(MASS)
 library(akima)
 library(mvtnorm)
 library(matlib)
+library(MASS)
+library(matrixStats)
 
 d <- 0:49    # All possible distances 
 phi <- 10    # Usikker på denne, men tror det kommer av def av rho i oppgaven 
@@ -161,6 +163,30 @@ plot(0:49, mu.no.error, type="l",col="blue",ylab="^r(x|d)",xlab="x",ylim=c(min(l
 lines(0:49, low.lim.0, lty="dashed",col="red")
 lines(0:49, high.lim.0, lty="dashed",col="red")
 
+# plotting sample mean with prediction interval based on sample variance:
+reals.0 <- mvrnorm(100,mu.no.error,cov.rd.0)
+mean.0 <- colMeans(reals.0)
+sample.sd.0 <- colSds(reals.0)
+
+low.lim.sample.0 <- mean.0 - qnorm(0.95)*sample.sd.0
+high.lim.sample.0 <- mean.0 + qnorm(0.95)*sample.sd.0
+
+reals.25 <- mvrnorm(100,mu.error,cov.rd.025)
+mean.25 <- colMeans(reals.25)
+sample.sd.25 <- colSds(reals.25)
+
+low.lim.sample.25 <- mean.25 - qnorm(0.95)*sample.sd.25
+high.lim.sample.25 <- mean.25 + qnorm(0.95)*sample.sd.25
+
+matplot(t(reals.25),type="l",xlab="x",ylab="r(t)",main="Error variance = 0.25")
+lines(1:50,mean.25,lty="solid",col="blue",lwd=3)
+lines(1:50,low.lim.sample.25,lty="dashed",col="red",lwd=3.5)
+lines(1:50,high.lim.sample.25,lty="dashed",col="red",lwd=3.5)
+
+matplot(t(reals.0),type="l",xlab="x",ylab="r(t)",main="Error variance = 0")
+lines(1:50,mean.0,lty="solid",col="blue",lwd=3)
+lines(1:50,low.lim.sample.0,lty="dashed",col="red",lwd=3.5)
+lines(1:50,high.lim.sample.0,lty="dashed",col="red",lwd=3.5)
 
 
 
