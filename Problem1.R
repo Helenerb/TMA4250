@@ -3,6 +3,7 @@ library(geoR);
 library(MASS)
 library(akima)
 library(mvtnorm)
+library(matlib)
 
 d <- 0:49    # All possible distances 
 phi <- 10    # Usikker på denne, men tror det kommer av def av rho i oppgaven 
@@ -60,6 +61,8 @@ plot(d/10,var.mat3.5,type="l")
 lines(d/10,var.mat3.1,type="l",col="orange")
 lines(d/10,corr.mat3,type="l",col="blue")
 
+
+# takes in vector of covariance between distances, and returns the corresponding covariance matrix. 
 getCovMatrix <- function(cov.vec){
   cov.matrix <- matrix(data=0,nrow=length(cov.vec),ncol=length(cov.vec))
   for(i in 1:length(cov.vec)){
@@ -124,7 +127,37 @@ plot.reals(prior.mat.3.5,"Matérn, nu = 3, var = 5")
 # we choose matérn with nu=1 and variance=5
 
 observations <- c(prior.mat.1.5[1,10], prior.mat.1.5[1,25], prior.mat.1.5[1,30])
+H <- matrix(data=0,nrow=3,ncol=50)
+H[1,10] <- 1; H[2,25] <- 1; H[3,30] <- 1
 
+covmatrix.r <- getCovMatrix(cov.spatial(0:49,cov.model="matern",cov.pars=c(5,10),kappa=1))
+
+error.var.0 <- matrix(data=0, nrow=3, ncol=3)
+error.var.025 <- 0.25*diag(3)
+
+mu.error <- covmatrix.r%*%t(H)%*%inv(H%*%covmatrix.r%*%t(H) + error.var.025)%*%observations
+mu.no.error <- covmatrix.r%*%t(H)%*%inv(H%*%covmatrix.r%*%t(H) + error.var.0)%*%observations
+
+cov.rd.025 <- covmatrix.r - covmatrix.r%*%t(H)%*%inv(H%*%covmatrix.r%*%t(H) + error.var.025)%*%H%*%covmatrix.r
+sd.025 <- sqrt(diag(cov.rd.025))
+
+low.lim <- mu.error - qnorm(0.95)*sd.025
+high.lim <- mu.error + qnorm(0.95)*sd.025
+
+
+plot(0:49, mu.error, type="l",col="blue",ylab="^r(x|d)",xlab="x",ylim=c(min(low.lim),max(high.lim)))
+lines(0:49, low.lim, lty="dashed",col="red")
+lines(0:49, high.lim, lty="dashed",col="red")
+
+cov.rd.0 <- covmatrix.r - covmatrix.r%*%t(H)%*%inv(H%*%covmatrix.r%*%t(H) + error.var.0)%*%H%*%covmatrix.r
+sd.0 <- sqrt(abs(diag(cov.rd.0)))
+
+low.lim.0 <- mu.no.error - qnorm(0.95)*sd.0
+high.lim.0 <- mu.no.error + qnorm(0.95)*sd.0
+
+plot(0:49, mu.no.error, type="l",col="blue",ylab="^r(x|d)",xlab="x",ylim=c(min(low.lim.0),max(high.lim.0)))
+lines(0:49, low.lim.0, lty="dashed",col="red")
+lines(0:49, high.lim.0, lty="dashed",col="red")
 
 
 
