@@ -145,19 +145,23 @@ low.lim <- mu.error - qnorm(0.95)*sd.025
 high.lim <- mu.error + qnorm(0.95)*sd.025
 
 
-plot(0:49, mu.error, type="l",col="blue",ylab="^r(x|d)",xlab="x",ylim=c(min(low.lim),max(high.lim)))
-lines(0:49, low.lim, lty="dashed",col="red")
-lines(0:49, high.lim, lty="dashed",col="red")
-
 cov.rd.0 <- covmatrix.r - covmatrix.r%*%t(H)%*%inv(H%*%covmatrix.r%*%t(H) + error.var.0)%*%H%*%covmatrix.r
 sd.0 <- sqrt(abs(diag(cov.rd.0)))
 
 low.lim.0 <- mu.no.error - qnorm(0.95)*sd.0
 high.lim.0 <- mu.no.error + qnorm(0.95)*sd.0
 
-plot(0:49, mu.no.error, type="l",col="blue",ylab="^r(x|d)",xlab="x",ylim=c(min(low.lim.0),max(high.lim.0)))
+par(mfrow=c(1,2))
+
+plot(0:49, mu.error, type="l",col="blue",ylab="^r(x|d)",xlab="x",ylim=c(min(low.lim),max(high.lim)),main="error variance = 0.25")
+lines(0:49, low.lim, lty="dashed",col="red")
+lines(0:49, high.lim, lty="dashed",col="red")
+
+plot(0:49, mu.no.error, type="l",col="blue",ylab="^r(x|d)",xlab="x",ylim=c(min(low.lim.0),max(high.lim.0)),main="error variance = 0")
 lines(0:49, low.lim.0, lty="dashed",col="red")
 lines(0:49, high.lim.0, lty="dashed",col="red")
+
+
 
 
 
