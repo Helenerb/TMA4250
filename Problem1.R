@@ -120,6 +120,15 @@ plot.reals(prior.mat.3.1,"Matérn, nu = 3, var = 1")
 prior.mat.3.5 <- get.prior.real("matern", sigma.sq=5, phi, nu=3)
 plot.reals(prior.mat.3.5,"Matérn, nu = 3, var = 5")
 
+# Problem d) choosing one realization to use as our data points:
+# we choose matérn with nu=1 and variance=5
+
+observations <- c(prior.mat.1.5[1,10], prior.mat.1.5[1,25], prior.mat.1.5[1,30])
+
+
+
+
+
 
 
 
