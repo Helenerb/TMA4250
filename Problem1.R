@@ -188,10 +188,16 @@ lines(1:50,mean.0,lty="solid",col="blue",lwd=3)
 lines(1:50,low.lim.sample.0,lty="dashed",col="red",lwd=3.5)
 lines(1:50,high.lim.sample.0,lty="dashed",col="red",lwd=3.5)
 
+# Problem 1f: 
 
 
+As <- apply(reals.0,1,function(x) {sum(x > 2)})
+var(As)
+Ahat <- sum(As)/100
+Ahat
 
-
+Atilde <- sum(mu.no.error > 2)
+Atilde
 
 
 
