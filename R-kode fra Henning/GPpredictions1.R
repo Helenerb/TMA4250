@@ -46,3 +46,4 @@ condMu=mu[1:r]-Sigma12%*%solve(Sigma22)%*%(mu[1:r]-a)
 #Conditional variance
 condVar=Sigma11 - Sigma12%*%solve(Sigma22)%*%c(Sigma12)
 sqrt(condVar)
+

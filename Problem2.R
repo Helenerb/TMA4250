@@ -15,7 +15,7 @@ krige.pred <- krige.conv(coords = topo.geodata$coords,data=topo.geodata$data,loc
 ##Plot: 
 
 # make krige.pred into dataframe for easier plotting
-krige.df <- data.frame("x"=pred.points$Var1,"y"=pred.points$Var2,"z"=krige.pred$predict, "v"=krige.pred$krige.var, "obs.x"=topo$x, "obs.y"=topo$y, "obs.z"=topo$z)
+krige.df <- data.frame("x"=pred.points$Var1,"y"=pred.points$Var2,"z"=krige.pred$predict, "v"=krige.pred$krige.var)
 
 # plotting the Krige prediction 
 krige.plot = ggplot() + geom_tile(data=krige.df, aes(x=x, y=y, fill=z)) + scale_fill_gradientn(colors=rainbow(4))
@@ -23,7 +23,7 @@ krige.plot = krige.plot + theme_classic()
 krige.plot
 
 # plotting the variance from the Krige prediction
-krige.plot.var = ggplot() + geom_tile(data=krige.df, aes(x=x, y=y, fill=v)) + scale_fill_gradientn(colors=cm.colors(7))
+krige.plot.var = ggplot() + geom_tile(data=krige.df, aes(x=x, y=y, fill=v)) + scale_fill_gradientn(colors=c("blue", "lightblue","lightgreen","green","orange","red"),breaks=c(0,200,400,600,800,Inf))
 krige.plot.var = krige.plot.var + theme_classic()
 krige.plot.var = krige.plot.var + geom_point(data=topo, aes(x=topo$x,y=topo$y),shape=4)
 krige.plot.var
