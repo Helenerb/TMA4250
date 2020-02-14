@@ -68,9 +68,22 @@ ML.variograms <- function(n,ini.cov.pars,title,L.grid,df,var_r,ksi_r){
   
   vgram.d = data.frame("fitted"=vgram.fitted, "analytic"=vgram.analytic.d, "dist"=seq(0:40))
   vgram.d <- reshape2::melt(vgram.d, id.var="dist")
-  ggplot(data=vgram.d, aes(x=dist, y=value, col=variable)) + geom_line() + theme_classic() + ggtitle(title) + geom_text(x=30,y=1,label=(fitted.params$sigmasq),show.legend = FALSE)
+  plot <- ggplot(data=vgram.d, aes(x=dist, y=value, col=variable)) + geom_line() + theme_classic() + ggtitle(title) + geom_text(x = 25, y=1, label=expression(sigma^2), show.legend = FALSE) + geom_text(x=30,y=1,label=(round(fitted.params$sigmasq,2)),show.legend = FALSE) + geom_text(x = 25, y=0.7, label=expression(xi^2), show.legend=FALSE) + geom_text(x=30,y=0.7,label=(round(fitted.params$phi,2)),show.legend = FALSE)
+  return(plot)
 }
 
-ML.variograms(36,c(2,1),"heii!!",L.grid,df,var_r,ksi_r)
+require(gridExtra)
+
+
+plot9 = ML.variograms(9,c(2,1),"Using 9 observations",L.grid,df,var_r,ksi_r)
+plot64 = ML.variograms(64,c(2,1),"Using 64 observations",L.grid,df,var_r,ksi_r)
+plot100 = ML.variograms(100,c(2,1),"Using 100 observations",L.grid,df,var_r,ksi_r)
+
+#grid.arrange(plot9,plot64,plot100,ncol=3)
+
+plotall = ML.variograms(900,c(2,1),"Using all observations",L.grid,df,var_r,ksi_r)
+plot36 = ML.variograms(36,c(2,1),"Using 9 observations",L.grid,df,var_r,ksi_r)
+
+grid.arrange(plotall,plot36,ncol=2)
 
 
