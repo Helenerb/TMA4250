@@ -1,0 +1,5 @@
+#vgram.sampled=variog(coords=L.grid,data=df$z,uvec=13)
+#vgram.analytic =var_r*(1-exp(-vgram.sampled$u/ksi_r))
+#vgram = data.frame("sampled"=vgram.sampled$v, "analytic"=vgram.analytic, "dist"=vgram.sampled$u)
+#vgram <- reshape2::melt(vgram, id.var="dist")
+#ggplot(data=vgram, aes(x=dist, y=value, col=variable)) + geom_line() + theme_classic() + ggtitle("seed = 125")
