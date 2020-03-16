@@ -111,20 +111,47 @@ lambda.test <- lambda.hat(test.df,0.2)
 MC.sim <- function(obs.df, S, t.max, t.lamb){
   no <- length(obs.df$x)
   sim.J <- rep(0,t.max/0.01)
-  sim.lamb <- matrix(0L, nrow=9,ncol=9)
+  sim.lamb <- matrix(0L,nrow=9,ncol=9)
+  
+  # for variance, storing simulation results:
+  lamb.arr <- array(data=NA, dim=c(9,9,S))
+  J.arr <- matrix(0L,nrow=S,ncol=length(sim.J))
+  
   for(s in 1:S){
+    cat("s:", s, " ")
     sim.df <- sim.stat.poiss(no)
-    sim.J = sim.J + J.hat(sim.df,t.max)
-    sim.lamb = sim.lamb + lambda.hat(sim.df,t.lamb)
+    J.hat <- J.hat(sim.df,t.max)
+    sim.J = sim.J + J.hat
+    cat("length: ", length(J.hat), "\n")
+    J.arr[s,] <- J.hat$result
+    lambda.hat <- lambda.hat(sim.df,t.lamb)
+    lamb.arr[,,s] <- lambda.hat
+    sim.lamb = sim.lamb + lambda.hat
   }
-  sim.J = sim.J/S
-  sim.lamb = sim.lamb/S
-  return(list("J"=sim.J, "lamb"=sim.lamb))
+  J.mean = sim.J/S
+  lamb.mean = sim.lamb/S
+  
+  #finding the variance:
+  J.var <- (J.mean-J.arr[1,])^2
+  for(i in 2:S){
+    J.var = J.var + (J.mean-J.arr[i,])^2
+  }
+  J.var = J.var/(S-1)
+  
+  lamb.var <- (lamb.mean - lamb.arr[,,1])^2
+  for (j in 2:S){
+    lamb.var <- lamb.var + (lamb.mean-lamb.arr[,,j])^2
+  }
+  lamb.var = lamb.var/(S-1)
+  return(list("J.mean"=J.mean, "lamb.mean"=lamb.mean, "J.var"=J.var, "lamb.var" = lamb.var))
 }
 
 test.MC <- MC.sim(redwood, 10, 0.7, 0.3)
-J.test <- test.MC$J
-lamb.test <- test.MC$lamb
+J.mean <- test.MC$J.mean
+J.var <- test.MC$J.var
+lamb.mean <- test.MC$lamb.mean
+lamb.var <- test.MC$lamb.var
+
 
 #for comparison:
 J.redwood <- J.hat(redwood, 0.7)
