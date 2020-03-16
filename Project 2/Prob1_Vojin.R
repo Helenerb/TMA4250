@@ -6,9 +6,9 @@ library(reshape2)
 library(RColorBrewer)
 
 #read data
-cells   = read.table(file = 'cells.dat.txt', col.names = c('x', 'y'))
-pines   = read.table(file = 'pines.dat.txt', skip=3, col.names = c('x', 'y')) #first 3 lines not important?
-redwood = read.table(file = 'redwood.dat.txt', col.names = c('x', 'y'))
+cells   = read.table(file = 'cells.dat', col.names = c('x', 'y'))
+pines   = read.table(file = 'pines.txt', col.names = c('x', 'y')) #first 3 lines not important?
+redwood = read.table(file = 'redwood.dat', col.names = c('x', 'y'))
 
 #initial plots
 ggplot(data = cells, aes(x=x, y=y)) + 
