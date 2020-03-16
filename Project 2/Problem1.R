@@ -152,7 +152,17 @@ J.var <- test.MC$J.var
 lamb.mean <- test.MC$lamb.mean
 lamb.var <- test.MC$lamb.var
 
+# confidence interval:
+J.upper <- J.mean + 1.96*sqrt(J.var)/sqrt(10)
+J.lower <- J.mean - 1.96*sqrt(J.var)/sqrt(10)
 
 #for comparison:
 J.redwood <- J.hat(redwood, 0.7)
+J.redwood <- data.frame(J.redwood,"t"=seq(0.01,0.7,by=0.01))
 lambda.redwood <- lambda.hat(redwood, 0.3)
+
+# plot confidence interval:
+
+plot(J.redwood$t, J.redwood$result)
+lines(seq(0.01,0.7,by=0.01), J.upper$result, col="red")
+lines(seq(0.01,0.7,by=0.01), J.lower$result, col="red")
