@@ -77,11 +77,31 @@ J.hat <- function(df, t.end, no){
   return(data.frame(result))
 }
 
-test.df <- sim.stat.poiss(10)
+test.df <- sim.stat.poiss(20)
+plot(test.df$x, test.df$y)
 result.test <- J.hat(test.df,0.7,10)
 
-lambda.hat <- function(df){
-  
+lambda.hat <- function(df, t){
+  norm <- pi*t^2 # not taking boundary into account! 
+  # discretize area:
+  xs <- seq(0.1,0.9,by=0.1)
+  ys <- seq(0.1,0.9, by=0.1)
+  grid <- expand.grid(xs,ys)
+  result <- matrix(nrow=length(ys),ncol=length(xs)) # den er fyllt med NAs nå
+  for(i in 1:length(xs)){
+    for(j in 1:length(ys)){
+      # regn ut!
+      sum.inner <- 0
+      for(n in 1:length(df$x)){
+        if( sqrt((xs[i] - df$x[n])^2 + (ys[j] - df$y[n])^2) <= t){
+          sum.inner <- sum.inner + 1
+        }
+      }
+      result[i,j] <- sum.inner/norm
+    }
+  }
+  return(result)
 }
 
+lambda.test <- lambda.hat(test.df,0.3)
 
