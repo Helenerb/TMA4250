@@ -12,6 +12,7 @@ redwood <- read.table("redwood.dat.txt", col.names=c('x',  'y'))
 #TODO: VOJIN! Endre filen her til der den ligger hos deg! 
 pines <- read.table(file = 'pines.dat.txt', skip=3, col.names = c('x','y'))
 
+
 # a)
 # Visualize plots:
 
@@ -53,9 +54,10 @@ sim.stat.poiss <- function(no){
   return(df)
 }
 
-J.hat <- function(df, t.end, no){
+J.hat <- function(df, t.end){
+  no <- length(df$x)
   ts = seq(0.01,t.end,by=0.01)
-  result = rep(0,t.end)
+  result = rep(0,length(ts))
   for(k in 1:length(ts)){
     t <- ts[k]
     norm <- no*(pi*t^2)          # area of Ball with radius t with arbitrary center x. 
@@ -76,10 +78,6 @@ J.hat <- function(df, t.end, no){
   }
   return(data.frame(result))
 }
-
-test.df <- sim.stat.poiss(20)
-plot(test.df$x, test.df$y)
-result.test <- J.hat(test.df,0.7,10)
 
 lambda.hat <- function(df, t){
   norm <- pi*t^2 # not taking boundary into account! 
@@ -103,5 +101,31 @@ lambda.hat <- function(df, t){
   return(result)
 }
 
-lambda.test <- lambda.hat(test.df,0.3)
+test.df <- sim.stat.poiss(42)
+plot(test.df$x, test.df$y)
+result.test <- J.hat(test.df,0.7)
+lambda.test <- lambda.hat(test.df,0.2)
 
+# simulation algoritm:
+
+MC.sim <- function(obs.df, S, t.max, t.lamb){
+  no <- length(obs.df$x)
+  sim.J <- rep(0,t.max/0.01)
+  sim.lamb <- matrix(0L, nrow=9,ncol=9)
+  for(s in 1:S){
+    sim.df <- sim.stat.poiss(no)
+    sim.J = sim.J + J.hat(sim.df,t.max)
+    sim.lamb = sim.lamb + lambda.hat(sim.df,t.lamb)
+  }
+  sim.J = sim.J/S
+  sim.lamb = sim.lamb/S
+  return(list("J"=sim.J, "lamb"=sim.lamb))
+}
+
+test.MC <- MC.sim(redwood, 10, 0.7, 0.3)
+J.test <- test.MC$J
+lamb.test <- test.MC$lamb
+
+#for comparison:
+J.redwood <- J.hat(redwood, 0.7)
+lambda.redwood <- lambda.hat(redwood, 0.3)
