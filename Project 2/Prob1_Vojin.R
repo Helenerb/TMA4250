@@ -27,23 +27,21 @@ ggplot(data = redwood, aes(x=x, y=y)) +
   theme_bw()
 
 #set up for Kfn
-L_cells = Kfn(cells, fs = 1)
-L_cells_df = data.frame(t = L_cells$x, L = L_cells$y)
+ppregion()
+L_cells = Kfn(cells, fs = 1);      L_cells_df = data.frame(t = L_cells$x, L = L_cells$y)
 
-L_redwood = Kfn(redwood, fs = 1) 
-L_redwood_df = data.frame(t = L_redwood$x, L = L_redwood$y)
+L_redwood = Kfn(redwood, fs = 1) ; L_redwood_df = data.frame(t = L_redwood$x, L = L_redwood$y)
 
-L_pines = Kfn(pines, fs = 1)
-L_pines_df = data.frame(t = L_pines$x, L = L_pines$y)
+L_pines = Kfn(pines, fs = 1);      L_pines_df = data.frame(t = L_pines$x, L = L_pines$y)
 
 
 
 #empirical and theoretical
 
 ggplot() + 
-  geom_line(data=L_cells_df, aes(x=t,y=L, colour='green')) +
-  geom_line(data=L_pines_df, aes(x=t,y=L, colour='blue')) +
-  geom_line(data=L_redwood_df, aes(x=t,y=L, colour='red')) +
+  geom_line(data=L_cells_df, aes(x=t,y=L, colour='darkolivegreen4')) +
+  geom_line(data=L_pines_df, aes(x=t,y=L, colour='springgreen4')) +
+  geom_line(data=L_redwood_df, aes(x=t,y=L, colour='sienna')) +
   geom_abline(aes(slope = 1, intercept = 0, colour="black"),show.legend=FALSE)+
   theme_minimal() +
   theme(plot.title = element_text(hjust = 0.5),
@@ -52,4 +50,4 @@ ggplot() +
   scale_y_continuous(expand = c(0,0))+
   geom_path() + 
   ggtitle("L-interaction functions")+
-  scale_color_identity(name='',labels=c('green'='cells','blue'='pines','red'='redwood','black'='t'), guide="legend")
+  scale_color_identity(name='',labels=c('darkolivegreen4'='cells','springgreen4'='pines','sienna'='redwood','black'='t'), guide="legend")
