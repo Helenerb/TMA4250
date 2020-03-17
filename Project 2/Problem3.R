@@ -23,6 +23,20 @@ L.redwood <- Kfn(redwood, fs = sqrt(2))
 # torus.2d help function:
 
 torus.2d <- function(x){
+  while(x[1] < 0 | x[1] > 1 | x[2] < 0 | x[2] > 1){
+    if(x[1] < 0){
+      x[1] <- 1 + x[1]
+    }
+    if(x[1] > 1){
+      x[1] <- x[1] - 1
+    }
+    if(x[2] < 0){
+      x[2] <- 1 + x[2]
+    }
+    if(x[2] > 1){
+      x[2] <- x[2] - 1
+    }
+  }
   return(x)
 }
 
@@ -49,19 +63,13 @@ NS <- function(lamb.M, sigma.c, p.mu, p.sigma){
     
     # sample k.C child points
     for(i in 1:k.C){
-      cat(k.C, "\n")
-      cat(c(x.M, y.M), "\n")
-      cat(sigma.c*diag(2), "\n")
       x.C <- mvrnorm(1,c(x.M, y.M),sigma.c*diag(2))
-      cat(x.C, "\n")
       
       # transform to torus representation of D
       x.C <- torus.2d(x.C)
       
-      x.C.all <- rbind(x.C.all, x.C)
+      x.C.all <- rbind(x.C.all, x.C)       # store child events
     }
-       # store child events
-    cat(x.C.all, "\n")
   }
   return(list("x.C.all" = x.C.all, "x.mother"=x.mother))
 }
@@ -71,9 +79,12 @@ test$x.C.all
 x <- test$x.C.all[,"x"]
 y <- test$x.C.all[,"y"]
 
+#making it into a dataframe, to be able to compute L! 
+test.df <- data.frame("x" = x, "y" = y)
+
 x.M <- test$x.mother[,1]
 y.M <- test$x.mother[,2]
 
-plot(x,y, col="red")
+plot(x,y, col="red", xlim=c(0,1), ylim=c(0,1))
 points(x.M,y.M, col="green")
 test.df <- data.frame("x"=x,"y"=y)
