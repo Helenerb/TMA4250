@@ -146,23 +146,66 @@ MC.sim <- function(obs.df, S, t.max, t.lamb){
   return(list("J.mean"=J.mean, "lamb.mean"=lamb.mean, "J.var"=J.var, "lamb.var" = lamb.var))
 }
 
-test.MC <- MC.sim(redwood, 10, 0.7, 0.3)
+
+# redwood:
+test.MC <- MC.sim(redwood, 100, 0.7, 0.3)
 J.mean <- test.MC$J.mean
 J.var <- test.MC$J.var
 lamb.mean <- test.MC$lamb.mean
 lamb.var <- test.MC$lamb.var
 
 # confidence interval:
-J.upper <- J.mean + 1.96*sqrt(J.var)/sqrt(10)
-J.lower <- J.mean - 1.96*sqrt(J.var)/sqrt(10)
+J.upper <- J.mean + 1.645*sqrt(J.var)/sqrt(100)
+J.lower <- J.mean - 1.645*sqrt(J.var)/sqrt(100)
 
 #for comparison:
-J.redwood <- J.hat(redwood, 0.7)
-J.redwood <- data.frame(J.redwood,"t"=seq(0.01,0.7,by=0.01))
-lambda.redwood <- lambda.hat(redwood, 0.3)
+#J.redwood <- J.hat(redwood, 0.7)
+J.redwood <- data.frame("result" = J.hat(redwood, 0.7)$result,"t"=seq(0.01,0.7,by=0.01), "upper" = J.upper$result, "lower" = J.lower$result)
+#lambda.redwood <- lambda.hat(redwood, 0.3)
 
 # plot confidence interval:
+conf.redwood <- ggplot(data=J.redwood) + geom_line(aes(x=t, y=result), color="sienna", size=0.5) + 
+  geom_line(aes(y=upper, x=t), color="red") + geom_line(aes(y=lower, x=t), color="red") + 
+  ggtitle(label="J-function for Redwood") + xlab(label="t") + ylab(label="J")
+conf.redwood
+  
+# cells:
+test.MC <- MC.sim(cells, 100, 0.7, 0.3)
+J.mean <- test.MC$J.mean
+J.var <- test.MC$J.var
+lamb.mean <- test.MC$lamb.mean
+lamb.var <- test.MC$lamb.var
 
-plot(J.redwood$t, J.redwood$result)
-lines(seq(0.01,0.7,by=0.01), J.upper$result, col="red")
-lines(seq(0.01,0.7,by=0.01), J.lower$result, col="red")
+# confidence interval:
+J.upper <- J.mean + 1.645*sqrt(J.var)/sqrt(100)
+J.lower <- J.mean - 1.645*sqrt(J.var)/sqrt(100)
+
+#for comparison:
+J.cells <- data.frame("result" = J.hat(cells, 0.7)$result,"t"=seq(0.01,0.7,by=0.01), "upper" = J.upper$result, "lower" = J.lower$result)
+
+# plot confidence interval:
+conf.cells <- ggplot(data=J.cells) + geom_line(aes(x=t, y=result), color="darkolivegreen4", size=0.5) + 
+  geom_line(aes(y=upper, x=t), color="red") + geom_line(aes(y=lower, x=t), color="red") + 
+  ggtitle(label="J-function for Cells") + xlab(label="t") + ylab(label="J")
+conf.cells
+
+# pines:
+test.MC <- MC.sim(pines, 100, 0.7, 0.3)
+J.mean <- test.MC$J.mean
+J.var <- test.MC$J.var
+lamb.mean <- test.MC$lamb.mean
+lamb.var <- test.MC$lamb.var
+
+# confidence interval:
+J.upper <- J.mean + 1.645*sqrt(J.var)/sqrt(100)
+J.lower <- J.mean - 1.645*sqrt(J.var)/sqrt(100)
+
+#for comparison:
+J.pines <- data.frame("result" = J.hat(pines, 0.7)$result,"t"=seq(0.01,0.7,by=0.01), "upper" = J.upper$result, "lower" = J.lower$result)
+
+# plot confidence interval:
+conf.pines <- ggplot(data=J.pines) + geom_line(aes(x=t, y=result), color="springgreen4", size=0.5) + 
+  geom_line(aes(y=upper, x=t), color="red") + geom_line(aes(y=lower, x=t), color="red") + 
+  ggtitle(label="J-function for Pines") + xlab(label="t") + ylab(label="J")
+conf.pines
+
