@@ -45,7 +45,11 @@ NS.sim <- function(lamb.M, sigma.c, p.mu, p.sigma, S){
 #NS.sim <- NS.sim(7, 0.05^2, 6, 4, 100)
 
 # sixth guestimate:
-NS.sim <- NS.sim(7, 0.05^2, 4, 4, 100)
+#NS.sim <- NS.sim(7, 0.05^2, 5, 4, 100) #gir for høye estimater nært
+
+#seventh:
+#dytter trærne lenger vekk
+NS.sim <- NS.sim(7, 0.1^2, 5, 4, 100) #funker faktisk ganske bra!
 
 
 NS.sim$L.y
@@ -72,8 +76,8 @@ gg.df <- data.frame("redwood" = L.redwood$y, "x" = L.redwood$x, "mean" = NS.sim$
 NS.plot <- ggplot(data=gg.df) + geom_point(aes(x=x, y=redwood), color="sienna") + 
   geom_line(aes(x=x, y=upper), color="red", size=0.75) + 
   geom_line(aes(x=x, y=lower), color="red", size=0.75) + 
-  geom_line(aes(x=x, y=upper.reg), color="green", size=0.75) + 
-  geom_line(aes(x=x, y=lower.reg), color="green", size=0.75) + 
+  #geom_line(aes(x=x, y=upper.reg), color="green", size=0.75) + 
+  #geom_line(aes(x=x, y=lower.reg), color="green", size=0.75) + 
   xlab(label="t") + ylab(label="L")
 NS.plot
 
@@ -98,6 +102,8 @@ plot.real.NS(real = NS(7, 0.05^2, 6, 4))
 # sixth guestimate:
 plot.real.NS(real = NS(7, 0.05^2, 4, 4))
 
+# sevent guestimate:
+plot.real.NS(real = NS(7, 0.1^2, 5, 4))
 
 
 
