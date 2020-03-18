@@ -18,6 +18,9 @@ redwood.plot
 ppregion()
 L.redwood <- Kfn(redwood, fs = sqrt(2))
 
+plot(L.redwood$x, L.redwood$y)
+lines(seq(0,0.7,by=0.01),seq(0,0.7,by=0.01))
+
 # Simulation algorithm for Neumann-Scott 
 
 # torus.2d help function:
@@ -74,13 +77,18 @@ NS <- function(lamb.M, sigma.c, p.mu, p.sigma){
   return(list("x.C.all" = x.C.all, "x.mother"=x.mother))
 }
 
-test <- NS(7, 0.125^2, 8, 10)
-test$x.C.all
-x <- test$x.C.all[,"x"]
-y <- test$x.C.all[,"y"]
+#test <- NS(7, 0.125^2, 8, 10)
+
+# second guestimate:
+test <- NS(7, 0.1^2, 6, 8)
+
 
 #making it into a dataframe, to be able to compute L! 
 test.df <- data.frame("x" = x, "y" = y)
+L.test <- Kfn(test.df, fs = sqrt(2))
+
+x <- test$x.C.all[,"x"]
+y <- test$x.C.all[,"y"]
 
 x.M <- test$x.mother[,1]
 y.M <- test$x.mother[,2]
@@ -88,3 +96,4 @@ y.M <- test$x.mother[,2]
 plot(x,y, col="red", xlim=c(0,1), ylim=c(0,1))
 points(x.M,y.M, col="green")
 test.df <- data.frame("x"=x,"y"=y)
+

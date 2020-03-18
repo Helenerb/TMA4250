@@ -75,7 +75,7 @@ Stat.sim <- L.sim(length(pines$x), 100)
 Stat.lower <- Stat.sim$mean + 0.95*(Stat.sim$max - Stat.sim$mean)
 Stat.upper <- Stat.sim$mean - 0.95*(Stat.sim$mean - Stat.sim$min)
 
-Stat.gg.df <- data.frame("redwood" = L.pines$y, "x" = L.pines$x, "mean" = Stat.sim$mean,
+Stat.gg.df <- data.frame("pines" = L.pines$y, "x" = L.pines$x, "mean" = Stat.sim$mean,
                          "lower" = Stat.lower, "upper" = Stat.upper)
 
 Stat.plot <- ggplot(data=Stat.gg.df) + geom_point(aes(x=x, y=pines), color="springgreen4") +
