@@ -10,7 +10,16 @@ library(datasets)
 library(MASS)
 
 Phi <- function(tau, tau.0, phi.0, phi.1){
-  return(tau)
+  if (tau < 0){
+    cat("uffda, du har fått negativ tau")
+    return(0)
+  }
+  else if(tau < tau.0){
+    return(phi.0)
+  }
+  else{
+    return(phi.0*exp(-phi.1*(tau - tau.0)))
+  }
 }
 
 p.Strauss <- function(X,Y, tau.0, phi.0, phi.1){
