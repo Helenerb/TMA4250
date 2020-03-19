@@ -33,7 +33,7 @@ Phi <- function(tau, tau.0, phi.0, phi.1){
 #   return(tau.0)
 # }
 
-Strauss <- function(tau, tau.0, phi.0, phi.1, k, T, X.0, Y.0){
+Strauss <- function(tau.0, phi.0, phi.1, k, T, X.0, Y.0){
   X.s <- X.0                            # initialize variable to hold x values 
   Y.s <- Y.0                            # initialize variable to hold y values 
   X.D.x <- X.0
@@ -46,8 +46,10 @@ Strauss <- function(tau, tau.0, phi.0, phi.1, k, T, X.0, Y.0){
     
     # finding alpha:
     taus.p <- sqrt((x.p-X.D.x)^2 + (y.p - X.D.y)^2) # distance between proposed and other events
-    taus.r <- sqrt((X.D.x[u]-X.D.x)^2 + (X.D.y[u] - X.D.y)^2) # distance between old and other events
-    sum.phi <- sum(Phi(taus.p) - Phi(taus.u))      # bruk apply hvis dette ikke går
+    taus.u <- sqrt((X.D.x[u]-X.D.x)^2 + (X.D.y[u] - X.D.y)^2) # distance between old and other events
+    
+    sum.phi <- sum(sapply(taus.p, FUN=Phi,tau.0=tau.0, phi.0=phi.0, phi.1=phi.1) -
+                     sapply(taus.u, FUN=Phi, tau.0=tau.0, phi.0=phi.0, phi.1=phi.1))      # bruk apply hvis dette ikke går
     alpha <- exp(-sum.phi)
     alpha <- min(1,alpha)
     
@@ -62,6 +64,16 @@ Strauss <- function(tau, tau.0, phi.0, phi.1, k, T, X.0, Y.0){
   return(list("X" = X.D.x, "Y" = X.D.y, "X.s"=X.s, "Y.s"=Y.s))
 }
 
+cells <- read.table("cells.dat.txt", col.names=c('x', 'y'))
+ppregion()
+L.cells <- Kfn(cells, fs = sqrt(2))
+
+test.Strss <- Strauss(tau.0 = 0.1, phi.0 = 10, phi.1 = 1, k = 4*length(cells$x), T=3, X.0 = cells$x, Y.0 = cells$y)
+
+test.Strss$X
+test.Strss$Y
+test.Strss$X.s
+test.Strss$Y.s
 
 
 
