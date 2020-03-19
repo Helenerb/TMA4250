@@ -42,12 +42,20 @@ Strauss <- function(tau.0, phi.0, phi.1, k, T, X.0, Y.0){
   
   for(i in 1:T){                        # T: number of MCMC iterations
     u <- sample(seq(1:k),size=1)        # sample random event point
-    x.p <- runif(1,-1,1)
-    y.p <- runif(1,-1,1)
+    #x.p <- runif(1,-1,1)
+    #y.p <- runif(1,-1,1)
+    x.p <- runif(1,-0.5,0.5)
+    y.p <- runif(1,-0.5,0.5)
     
     # finding alpha:
     taus.p <- sqrt((x.p-X.D.x)^2 + (y.p - X.D.y)^2) # distance between proposed and other events
     taus.u <- sqrt((X.D.x[u]-X.D.x)^2 + (X.D.y[u] - X.D.y)^2) # distance between old and other events
+    
+    taus.p <- taus.p[-u]                # DEBUG: should not include "itself?"
+    taus.u <- taus.u[-u]
+    if(i == 2){
+      cat(length(taus.u), length(cells$x))
+    }
     
     sum.phi <- sum(sapply(taus.p, FUN=Phi,tau.0=tau.0, phi.0=phi.0, phi.1=phi.1) -
                      sapply(taus.u, FUN=Phi, tau.0=tau.0, phi.0=phi.0, phi.1=phi.1))      # bruk apply hvis dette ikke går
@@ -79,18 +87,23 @@ L.cells <- Kfn(cells, fs = sqrt(2))
 # making init from cells to decrease time to convergence:
 X.init <- append(append(append(cells$x,cells$x),cells$x-1),cells$x-1)
 Y.init <- append(append(append(cells$y,cells$y-1),cells$y),cells$y-1)
-plot(X.init,Y.init)
+init.df = data.frame("x" = X.init, "y" = Y.init)
+init.df = init.df[which(X.init > 0.5 | X.init < -0.5 | Y.init > 0.5 | Y.init < -0.5),]
+
+X.init = append(runif(length(cells$x),-0.5,0.5),init.df$x)
+Y.init = append(runif(length(cells$x),-0.5,0.5),init.df$y)
+plot(X.init, Y.init)
 
 # looks ok
 
 #initial guess?
-#test.Strss <- Strauss(tau.0 = 0.1, phi.0 = 2, phi.1 = 5, k = 4*length(cells$x), T=500, X.0 = X.init, Y.0 = Y.init)
+#test.Strss <- Strauss(tau.0 = 0.1, phi.0 = 2, phi.1 = 5, k = length(cells$x), T=500, X.0 = X.init, Y.0 = Y.init)
 
 #guess 2, more repulsive:
-#test.Strss <- Strauss(tau.0 = 0.1, phi.0 = 2, phi.1 = 10, k = 4*length(cells$x), T=500, X.0 = X.init, Y.0 = Y.init)
+#test.Strss <- Strauss(tau.0 = 0.1, phi.0 = 2, phi.1 = 10, k = length(cells$x), T=500, X.0 = X.init, Y.0 = Y.init)
 
 #guess 3, increase phi.0:
-#test.Strss <- Strauss(tau.0 = 0.1, phi.0 = 5, phi.1 = 10, k = 4*length(cells$x), T=500, X.0 = X.init, Y.0 = Y.init)
+#test.Strss <- Strauss(tau.0 = 0.1, phi.0 = 5, phi.1 = 10, k = length(cells$x), T=500, X.0 = X.init, Y.0 = Y.init)
 
 #fourtn guess, increase phi.0 and phi.1:
 #test.Strss <- Strauss(tau.0 = 0.1, phi.0 = 10, phi.1 = 50, k = 4*length(cells$x), T=500, X.0 = X.init, Y.0 = Y.init)
@@ -99,13 +112,15 @@ plot(X.init,Y.init)
 #test.Strss <- Strauss(tau.0 = 0.125, phi.0 = 7, phi.1 = 20, k = 4*length(cells$x), T=500, X.0 = X.init, Y.0 = Y.init)
 
 #guess pushing too much into edges:
-#test.Strss <- Strauss(tau.0 = 0.1, phi.0 = 10, phi.1 = 1, k = 4*length(cells$x), T=500, X.0 = X.init, Y.0 = Y.init)
+#test.Strss <- Strauss(tau.0 = 0.1, phi.0 = 10, phi.1 = 1, k = length(cells$x), T=500, X.0 = X.init, Y.0 = Y.init)
 
 # guess with lower tau.0, but less rapidsly decreasing phi, Ser faktisk bra ut, også mens det konvergerer
-test.Strss <- Strauss(tau.0 = 0.05, phi.0 = 2, phi.1 = 3, k = 4*length(cells$x), T=5000, X.0 = X.init, Y.0 = Y.init)
+# test.Strss <- Strauss(tau.0 = 0.02, phi.0 = 100, phi.1 = 50, k = length(cells$x), T=2000, X.0 = X.init, Y.0 = Y.init)
 
 #trying to improve last:
-test.Strss <- Strauss(tau.0 = 0.075, phi.0 = 1.5, phi.1 = 3, k = 4*length(cells$x), T=3000, X.0 = X.init, Y.0 = Y.init)
+#test.Strss <- Strauss(tau.0 = 0.075, phi.0 = 1.5, phi.1 = 3, k = length(cells$x), T=2000, X.0 = X.init, Y.0 = Y.init)
+
+test.Strss <- Strauss(tau.0 = 0.02, phi.0 = 100, phi.1 = 50, k = length(cells$x), T=1000, X.0 = X.init, Y.0 = Y.init)
 
 # improved guess from last:
 
@@ -124,7 +139,7 @@ Strauss.sim <- function(S, X.0, Y.0, tau.0, phi.0, phi.1, T){
   L.x <- matrix(0L, nrow=0, ncol=50)                  # is 50 general?
   L.y <- matrix(0L, nrow=0, ncol=50)
   for(s in 1:S){
-    real <- Strauss(tau.0, phi.0, phi.1, k = 4*length(cells$x), T, X.0, Y.0)
+    real <- Strauss(tau.0, phi.0, phi.1, k = length(cells$x), T, X.0, Y.0)
     
     D.plus.df = data.frame("x"=real$X, "y"=real$Y)
     D.df = D.plus.df[which(D.plus.df$x > -0.5 &
@@ -169,5 +184,8 @@ test.sim <- Strauss.sim(20, X.init, Y.init, tau.0 = 0.05, phi.0 = 2, phi.1 = 3, 
 
 #guess 6: kanskje forbedring av forrige: nei, denne var ikke spesielt mye bedre...
 test.sim <- Strauss.sim(20, X.init, Y.init, tau.0 = 0.075, phi.0 = 1.5, phi.1 = 3, 1000)
+
+#guess 7: høyere verdier:
+test.sim <- Strauss.sim(20, X.init, Y.init, tau.0 = 0.02, phi.0 = 100, phi.1 = 50, 1000)
 
 compare.sims(test.sim, L.cells)
