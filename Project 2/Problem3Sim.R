@@ -1,8 +1,64 @@
 # NS simulation
 library(matrixStats)
+library(spatial)
+library(MASS)
+library(ggplot2)
+library(gridExtra)
+library(reshape2)
+library(RColorBrewer)
+library(datasets)
+library(MASS)
 
-ppregion()
-L.redwood <- Kfn(redwood, fs = sqrt(2))
+torus.2d <- function(x){
+  while(x[1] < 0 | x[1] > 1 | x[2] < 0 | x[2] > 1){
+    if(x[1] < 0){
+      x[1] <- 1 + x[1]
+    }
+    if(x[1] > 1){
+      x[1] <- x[1] - 1
+    }
+    if(x[2] < 0){
+      x[2] <- 1 + x[2]
+    }
+    if(x[2] > 1){
+      x[2] <- x[2] - 1
+    }
+  }
+  return(x)
+}
+
+NS <- function(lamb.M, sigma.c, p.mu, p.sigma){
+  k <- 0
+  k.M <- rpois(1,lamb.M)                    # sample no of mother points
+  
+  # initiate matrix to hold child events 
+  x.C.all <- matrix(0L, nrow = 0, ncol=2)
+  colnames(x.C.all) <- c("x", "y")
+  
+  #initiate matrix to hold mother events
+  x.mother <- matrix(0L, nrow = 0, ncol=2)
+  colnames(x.mother) <- c("x", "y")
+  
+  for(j in 1:k.M){
+    # sample location of mother node
+    x.M <- runif(1)
+    y.M <- runif(1)
+    x.mother <- rbind(x.mother, c(x.M, y.M)) # store mother event
+    
+    k.C <- rnorm(1,mean = p.mu, sd=sqrt(p.sigma))             # sample no of child points 
+    
+    # sample k.C child points
+    for(i in 1:k.C){
+      x.C <- mvrnorm(1,c(x.M, y.M),sigma.c*diag(2))
+      
+      # transform to torus representation of D
+      x.C <- torus.2d(x.C)
+      
+      x.C.all <- rbind(x.C.all, x.C)       # store child events
+    }
+  }
+  return(list("x.C.all" = x.C.all, "x.mother"=x.mother))
+}
 
 NS.sim <- function(lamb.M, sigma.c, p.mu, p.sigma, S){
   # initate matrix to store simulated values
@@ -29,6 +85,11 @@ NS.sim <- function(lamb.M, sigma.c, p.mu, p.sigma, S){
   return(list("L.x" = L.x, "L.y" = L.y, "mean" = L.mean, "min" = L.min, "max" = L.max, "var" = L.var ))
 }
 
+
+redwood <- read.table("redwood.dat.txt", col.names=c('x',  'y'))
+ppregion()
+L.redwood <- Kfn(redwood, fs = sqrt(2))
+
 # first guestimate:
 #NS.sim <- NS.sim(7, 0.125^2, 8, 10, 100)
 
@@ -50,13 +111,6 @@ NS.sim <- function(lamb.M, sigma.c, p.mu, p.sigma, S){
 #seventh:
 #dytter trærne lenger vekk
 NS.sim <- NS.sim(7, 0.1^2, 5, 4, 100) #funker faktisk ganske bra!
-
-
-NS.sim$L.y
-NS.sim$L.x
-NS.sim$min
-NS.sim$max
-NS.sim$mean
 
 # 95% confidence interval:
 NS.upper <- NS.sim$mean + 0.9*(NS.sim$max - NS.sim$mean)
