@@ -111,7 +111,30 @@ L.redwood <- Kfn(redwood, fs = sqrt(2))
 
 #seventh:
 #dytter trærne lenger vekk
-NS.sim <- NS.sim(lamb.M = 12, sigma.c = 0.05^2, 5, 4, lamb.p = 5, 100) #funker faktisk ganske bra!
+
+#nye, for Poisson: denne skal funke bra
+NS.sim <- NS.sim(lamb.M = 12, sigma.c = 0.05^2, 5, 4, lamb.p = 5, 100)
+
+#potensielt første, sånn som du tenkte tidligere: generelt for høy tetthet
+NS.sim <- NS.sim(lamb.M = 7, sigma.c = 0.125^2, 5, 4, lamb.p = 8, 100)
+
+#potensielt andre, minke verdi for sigma: innenfor, men fortsatt på den høye siden
+NS.sim <- NS.sim(lamb.M = 10, sigma.c = 0.05^2, 5, 4, lamb.p = 6, 100)
+
+# øker litt til:
+NS.sim <- NS.sim(lamb.M = 11, sigma.c = 0.05^2, 5, 4, lamb.p = 5, 100)
+
+#prøver å minke enda litt mer: fortsatt for høyt!
+NS.sim <- NS.sim(lamb.M = 12, sigma.c = 0.05^2, 5, 4, lamb.p = 4, 100)
+
+#prøver å senke variansen litt
+NS.sim <- NS.sim(lamb.M = 12, sigma.c = 0.03^2, 5, 4, lamb.p = 4, 100)
+
+#pøver å øke variansen i stedet:
+NS.sim <- NS.sim(lamb.M = 12, sigma.c = 0.06^2, 5, 4, lamb.p = 4, 100)
+
+#prøver nå med lamb.p 5 i stedet:
+
 
 # 95% confidence interval:
 NS.upper <- NS.sim$mean + 0.9*(NS.sim$max - NS.sim$mean)

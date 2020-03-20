@@ -217,7 +217,10 @@ test.sim <- Strauss.sim(50, X.init, Y.init, tau.0 = 0.02, phi.0 = 110, phi.1 = 8
 #prøver mer repulsive: det hadde motsatt effekt
 test.sim <- Strauss.sim(50, X.init, Y.init, tau.0 = 0.02, phi.0 = 110, phi.1 = 90, 700)
 
-#går tilbake på 
-test.sim <- Strauss.sim(50, X.init, Y.init, tau.0 = 0.02, phi.0 = 110, phi.1 = 90, 700)
+#går tilbake på phi.1, øker litt på phi.0 i stedet. Det ble litt bedre, fortsetter sånn
+test.sim <- Strauss.sim(50, X.init, Y.init, tau.0 = 0.02, phi.0 = 120, phi.1 = 80, 700)
+
+#øker phi.0 enda mer. marginalt bedre
+test.sim <- Strauss.sim(50, X.init, Y.init, tau.0 = 0.02, phi.0 = 130, phi.1 = 80, 700)
 
 compare.sims(test.sim, L.cells)
