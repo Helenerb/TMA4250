@@ -27,7 +27,7 @@ torus.2d <- function(x){
   return(x)
 }
 
-NS <- function(lamb.M, sigma.c, p.mu, p.sigma){
+NS <- function(lamb.M, sigma.c, p.mu, p.sigma, lamb.p){ #DEBUG
   k <- 0
   k.M <- rpois(1,lamb.M)                    # sample no of mother points
   
@@ -45,7 +45,8 @@ NS <- function(lamb.M, sigma.c, p.mu, p.sigma){
     y.M <- runif(1)
     x.mother <- rbind(x.mother, c(x.M, y.M)) # store mother event
     
-    k.C <- rnorm(1,mean = p.mu, sd=sqrt(p.sigma))             # sample no of child points 
+    #k.C <- rnorm(1,mean = p.mu, sd=sqrt(p.sigma))             # sample no of child points 
+    k.C <- rpois(1,lamb.p)                      # DEBUG
     
     # sample k.C child points
     for(i in 1:k.C){
@@ -60,13 +61,13 @@ NS <- function(lamb.M, sigma.c, p.mu, p.sigma){
   return(list("x.C.all" = x.C.all, "x.mother"=x.mother))
 }
 
-NS.sim <- function(lamb.M, sigma.c, p.mu, p.sigma, S){
+NS.sim <- function(lamb.M, sigma.c, p.mu, p.sigma, lamb.p, S){ #DEBUG
   # initate matrix to store simulated values
   L.x <- matrix(0L, nrow=0, ncol=50)                  # is 50 general?
   L.y <- matrix(0L, nrow=0, ncol=50)
   
   for(s in 1:S){
-    NS <- NS(lamb.M, sigma.c, p.mu, p.sigma)
+    NS <- NS(lamb.M, sigma.c, p.mu, p.sigma, lamb.p)
     
     x <- NS$x.C.all[,"x"]
     y <- NS$x.C.all[,"y"]
@@ -110,7 +111,7 @@ L.redwood <- Kfn(redwood, fs = sqrt(2))
 
 #seventh:
 #dytter trærne lenger vekk
-NS.sim <- NS.sim(7, 0.1^2, 5, 4, 100) #funker faktisk ganske bra!
+NS.sim <- NS.sim(lamb.M = 12, sigma.c = 0.05^2, 5, 4, lamb.p = 5, 100) #funker faktisk ganske bra!
 
 # 95% confidence interval:
 NS.upper <- NS.sim$mean + 0.9*(NS.sim$max - NS.sim$mean)
@@ -148,10 +149,10 @@ plot.real.NS <- function(real){
 }
 
 # fourth guestimate:
-plot.real.NS(real = NS(7, 0.1^2, 6, 6))
+plot.real.NS(real = NS(12, 0.05^2, 6, 6, 5))
 
 # fifth guestimate:
-plot.real.NS(real = NS(7, 0.05^2, 6, 4))
+plot.real.NS(real = NS(7, 0.05^2, 6, 4, 5))
 
 # sixth guestimate:
 plot.real.NS(real = NS(7, 0.05^2, 4, 4))
