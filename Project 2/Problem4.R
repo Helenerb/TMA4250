@@ -191,7 +191,7 @@ test.sim <- Strauss.sim(20, X.init, Y.init, tau.0 = 0.075, phi.0 = 1.5, phi.1 = 
 test.sim <- Strauss.sim(20, X.init, Y.init, tau.0 = 0.02, phi.0 = 100, phi.1 = 50, 1000)
 
 #guess 8: høyere verdier: bruk dette som second guess!!
-test.sim <- Strauss.sim(50, X.init, Y.init, tau.0 = 0.02, phi.0 = 10, phi.1 = 5, 1000)
+test.sim <- Strauss.sim(100, X.init, Y.init, tau.0 = 0.02, phi.0 = 10, phi.1 = 5, 1000)
 
 #finn siste guess, helst ikke helt det samme! 
 test.sim <- Strauss.sim(100, X.init, Y.init, tau.0 = 0.02, phi.0 = 80, phi.1 = 40, 700)
@@ -201,5 +201,23 @@ test.sim <- Strauss.sim(100, X.init, Y.init, tau.0 = 0.015, phi.0 = 120, phi.1 =
 
 #sammenligner dette med den "optimale":
 test.sim <- Strauss.sim(100, X.init, Y.init, tau.0 = 0.02, phi.0 = 100, phi.1 = 50, 700)
+
+#guess 12: øker tau.0 og phi.1 litt etter at du har tenkt deg om: fortsatt litt høy ved lave t
+test.sim <- Strauss.sim(50, X.init, Y.init, tau.0 = 0.025, phi.0 = 100, phi.1 = 70, 700)
+
+# guess 13: øker phi.1 litt fra forrige: da ble det faktisk verrre
+test.sim <- Strauss.sim(50, X.init, Y.init, tau.0 = 0.025, phi.0 = 100, phi.1 = 80, 700)
+
+# øker phi.0 litt
+test.sim <- Strauss.sim(50, X.init, Y.init, tau.0 = 0.025, phi.0 = 110, phi.1 = 80, 700)
+
+#går tilbake på tau.0: her ligger de ganske godt innenfor langt oppe
+test.sim <- Strauss.sim(50, X.init, Y.init, tau.0 = 0.02, phi.0 = 110, phi.1 = 80, 700)
+
+#prøver mer repulsive: det hadde motsatt effekt
+test.sim <- Strauss.sim(50, X.init, Y.init, tau.0 = 0.02, phi.0 = 110, phi.1 = 90, 700)
+
+#går tilbake på 
+test.sim <- Strauss.sim(50, X.init, Y.init, tau.0 = 0.02, phi.0 = 110, phi.1 = 90, 700)
 
 compare.sims(test.sim, L.cells)
