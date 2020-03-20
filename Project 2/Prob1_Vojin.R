@@ -6,9 +6,9 @@ library(reshape2)
 library(RColorBrewer)
 
 #read data
-cells   = read.table(file = 'cells.dat.txt', col.names = c('x', 'y'))
-pines   = read.table(file = 'pines.dat.txt', skip=3, col.names = c('x', 'y')) #first 3 lines not important?
-redwood = read.table(file = 'redwood.dat.txt', col.names = c('x', 'y'))
+cells   = read.table(file = 'cells.txt', col.names = c('x', 'y'))
+pines   = read.table(file = 'pines.txt', col.names = c('x', 'y')) #first 3 lines not important?
+redwood = read.table(file = 'redwood.txt', col.names = c('x', 'y'))
 
 #initial plots
 ggplot(data = cells, aes(x=x, y=y)) + 
@@ -51,3 +51,4 @@ ggplot() +
   geom_path() + 
   ggtitle("L-interaction functions")+
   scale_color_identity(name='',labels=c('darkolivegreen4'='cells','springgreen4'='pines','sienna'='redwood','black'='t'), guide="legend")
+
