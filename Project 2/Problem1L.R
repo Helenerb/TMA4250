@@ -1,20 +1,57 @@
-# problem 1c, considering the L-function instead of the J-function:
+# problem 1a and c, considering the L-function instead of the J-function:
+library(spatial)
+library(MASS)
+library(ggplot2)
+library(gridExtra)
+library(reshape2)
+library(RColorBrewer)
+library(datasets)
+
+cells <- read.table("cells.dat.txt", col.names=c('x', 'y'))
+redwood <- read.table("redwood.dat.txt", col.names=c('x',  'y'))
+pines <- read.table(file = 'pines.dat.txt', skip=3, col.names = c('x','y'))
+
+
+# a)
+# Visualize plots:
+
+# Cells:
+cells.plot <- ggplot(data=cells, aes(x=x, y=y)) + geom_point(color="darkolivegreen4") +
+  xlab(label="x") + ylab(label="y") #+ ggtitle(label="Cells")
+cells.plot
+
+# Redwood:
+redwood.plot <- ggplot(data=redwood, aes(x=x, y=y)) + geom_point(color="sienna") +
+  xlab(label="x") + ylab(label="y") #+ ggtitle(label="Redwood")
+redwood.plot
+
+# Pines:
+pines.plot <- ggplot(data=pines, aes(x=x, y=y)) + geom_point(color="springgreen4") +
+  xlab(label="x") + ylab(label="y") #+ ggtitle(label="Pines")
+pines.plot
+
+ppregion()
+L.cells <- Kfn(cells, fs = sqrt(2))
+L.pines <- Kfn(pines, fs = sqrt(2))
+L.redwood <- Kfn(redwood, fs = sqrt(2))
+
+
+sim.stat.poiss <- function(no){
+  x <- runif(no)
+  y <- runif(no)
+  df<- data.frame(x, y)
+  return(df)
+}
+
 
 L.sim <- function(no, S){
   # initate matrix to store simulated values
-  L.x <- matrix(0L, nrow=0, ncol=50)                  # is 50 general?
+  L.x <- matrix(0L, nrow=0, ncol=50)        
   L.y <- matrix(0L, nrow=0, ncol=50)
   
   for(s in 1:S){
-    # bytt ut med en simulering av stat poiss med k
-    #NS <- NS(lamb.M, sigma.c, p.mu, p.sigma)
     real <- sim.stat.poiss(no)          # returns df with columns "x" and "y"
-    
-    #x <- NS$x.C.all[,"x"]
-    #y <- NS$x.C.all[,"y"]
-    
-    #NS.df <- data.frame("x" = x, "y" = y)
-    L.real <- Kfn(real, fs = sqrt(2))     # kanskje 1???
+    L.real <- Kfn(real, fs = sqrt(2)) 
     L.x <- rbind(L.x, L.real$x)
     L.y <- rbind(L.y, L.real$y)
     
