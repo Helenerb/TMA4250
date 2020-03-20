@@ -57,25 +57,33 @@ sims.post <- t(mapply(function(lambda){rpois(N.sims, lambda)}, lambda=lambda.pos
 means.pri=rowMeans(sims.pri) 
 means.post=rowMeans(sims.post)
 data.d = prior.reals=pines[c("x","y")]
-data.d[c("pri","post")] = c(means.pri,means.post)
-maks.val=max(data.d[c("pri","post")]); min.val=min(data.d[c("pri","post")])
+data.d[c("pri","post","obs")] = c(means.pri,means.post,obs)
+maks.val=max(data.d[c("pri","post","obs")]); min.val=min(data.d[c("pri","post","obs")])
          
 #plot prior)d
-ggplot(data=data.d, aes(x, y, fill=pri)) + geom_tile() + 
+plot.d.1=ggplot(data=data.d, aes(x, y, fill=pri)) + geom_tile() + 
   scale_fill_gradient(expression('count d'), low='white',high='springgreen4', lim=c(min.val,maks.val)) + theme_minimal() + 
   geom_hline(yintercept=seq(0,300,by=10), size=0.1) +
   geom_vline(xintercept=seq(0,300,by=10), size=0.1) +
   ggtitle(paste(" Prior model \n", "Total count = ",round(sum(means.pri),0)))
 #plot posterior
-ggplot(data=data.d, aes(x, y, fill=post)) + geom_tile() + 
+plot.d.2=ggplot(data=data.d, aes(x, y, fill=post)) + geom_tile() + 
   scale_fill_gradient(expression('count d'), low='white',high='springgreen4', lim=c(min.val,maks.val)) + theme_minimal() + 
   geom_hline(yintercept=seq(0,300,by=10), size=0.1) + 
   geom_vline(xintercept=seq(0,300,by=10), size=0.1) +
   ggtitle(paste(" Posterior model \n", "Total count = ",round(sum(means.post),0)))
 
+plot.d.3=ggplot(data=data.d, aes(x, y, fill=obs)) + geom_tile() + 
+  scale_fill_gradient(expression('count d'), low='white',high='springgreen4', lim=c(min.val,maks.val)) + theme_minimal() + 
+  geom_hline(yintercept=seq(0,300,by=10), size=0.1) + 
+  geom_vline(xintercept=seq(0,300,by=10), size=0.1) +
+  ggtitle(paste(" Observations \n", "Total count = ",round(sum(obs),0)))
 
 
+plot.d=list(plot.d.1,plot.d.2,plot.d.3)
+do.call("grid.arrange", c(plot.d, ncol=3))
 
+mean(1-probs$alpha)
 
 
 
