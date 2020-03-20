@@ -94,7 +94,7 @@ X.init = append(runif(length(cells$x),-0.5,0.5),init.df$x)
 Y.init = append(runif(length(cells$x),-0.5,0.5),init.df$y)
 plot(X.init, Y.init)
 
-# looks ok
+#TODO: Her kan du kommentere ut og plotte én realisasjon av et RF med forskjellige parametre
 
 #initial guess?
 #test.Strss <- Strauss(tau.0 = 0.1, phi.0 = 2, phi.1 = 5, k = length(cells$x), T=500, X.0 = X.init, Y.0 = Y.init)
@@ -128,12 +128,12 @@ plot(test.Strss$X,test.Strss$Y)
 test.Strss$accprob
 
 # getting only inner domain:
-D.plus.df = data.frame("x"=test.Strss$X, "y"=test.Strss$Y)
+#D.plus.df = data.frame("x"=test.Strss$X, "y"=test.Strss$Y)
 
-D.df = D.plus.df[which(D.plus.df$x > -0.5 & D.plus.df$x < 0.5 & D.plus.df$y < 0.5 & D.plus.df$y > -0.5),]
-D.df = data.frame("x"=D.df$x + 0.5, "y"=D.df$y + 0.5)
+#D.df = D.plus.df[which(D.plus.df$x > -0.5 & D.plus.df$x < 0.5 & D.plus.df$y < 0.5 & D.plus.df$y > -0.5),]
+#D.df = data.frame("x"=D.df$x + 0.5, "y"=D.df$y + 0.5)
 
-D.L <- Kfn(D.df, fs=sqrt(2))
+#D.L <- Kfn(D.df, fs=sqrt(2))
 
 Strauss.sim <- function(S, X.0, Y.0, tau.0, phi.0, phi.1, T){
   L.x <- matrix(0L, nrow=0, ncol=50)                  # is 50 general?
@@ -170,11 +170,13 @@ compare.sims <- function(sim, L.cells){
   NS.plot
 }
 
+#TODO; Disse tar lang tid å gjøre, bare kjør én test.sim av gangen og så kjør compare.sims
+
 #dette er guess 2; trenger noe som er mer repulsive!
 #test.sim <- Strauss.sim(100, X.init, Y.init, tau.0=0.1, phi.0=2, phi.1=10, 500) 
 
 #guess 3:
-#test.sim <- Strauss.sim(50, X.init, Y.init, tau.0=0.1, phi.0=5, phi.1=10, 1000) 
+test.sim <- Strauss.sim(50, X.init, Y.init, tau.0=0.1, phi.0=5, phi.1=10, 1000) 
 
 #guess 4:
 test.sim <- Strauss.sim(20, X.init, Y.init, tau.0=0.125, phi.0=10, phi.1=20, 1000) 
@@ -187,5 +189,17 @@ test.sim <- Strauss.sim(20, X.init, Y.init, tau.0 = 0.075, phi.0 = 1.5, phi.1 = 
 
 #guess 7: høyere verdier:
 test.sim <- Strauss.sim(20, X.init, Y.init, tau.0 = 0.02, phi.0 = 100, phi.1 = 50, 1000)
+
+#guess 8: høyere verdier: bruk dette som second guess!!
+test.sim <- Strauss.sim(50, X.init, Y.init, tau.0 = 0.02, phi.0 = 10, phi.1 = 5, 1000)
+
+#finn siste guess, helst ikke helt det samme! 
+test.sim <- Strauss.sim(100, X.init, Y.init, tau.0 = 0.02, phi.0 = 80, phi.1 = 40, 700)
+
+#prøver å gjøre det litt bedre, men ikke ha helt kokte verdier:
+test.sim <- Strauss.sim(100, X.init, Y.init, tau.0 = 0.015, phi.0 = 120, phi.1 = 60, 700)
+
+#sammenligner dette med den "optimale":
+test.sim <- Strauss.sim(100, X.init, Y.init, tau.0 = 0.02, phi.0 = 100, phi.1 = 50, 700)
 
 compare.sims(test.sim, L.cells)
